@@ -1,11 +1,6 @@
 public class ExpressionParser {
-    var scanner: Scanner
     
-    init(scanner: Scanner) {
-        self.scanner = scanner
-    }
-    
-    func parseExpression(inout outEmpty: Bool) throws -> Expression {
+    func parseExpression(scanner: Scanner, inout empty outEmpty: Bool) throws -> Expression {
     
         enum State {
             // error

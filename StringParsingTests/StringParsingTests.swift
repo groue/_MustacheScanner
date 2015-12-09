@@ -14,10 +14,10 @@ class StringParsingTests: XCTestCase {
     func testParsing(string: String, expectedExpression: Expression, expectedDistance: Scanner.Distance) {
         print(String(reflecting: string))
         let scanner = Scanner(characters: string.characters)
-        let expressionParser = ExpressionParser(scanner: scanner)
+        let expressionParser = ExpressionParser()
         var empty = false
         do {
-            let expression = try expressionParser.parseExpression(&empty)
+            let expression = try expressionParser.parseExpression(scanner, empty: &empty)
             XCTAssertEqual(expression, expectedExpression)
             XCTAssertEqual(scanner.characters.startIndex.distanceTo(scanner.scanIndex), expectedDistance)
         } catch {
@@ -28,10 +28,10 @@ class StringParsingTests: XCTestCase {
     func testParsing(string: String, expectedEmpty: Bool,  expectedError: String, expectedDistance: Scanner.Distance) {
         print(String(reflecting: string))
         let scanner = Scanner(characters: string.characters)
-        let expressionParser = ExpressionParser(scanner: scanner)
+        let expressionParser = ExpressionParser()
         var empty = false
         do {
-            try expressionParser.parseExpression(&empty)
+            try expressionParser.parseExpression(scanner, empty: &empty)
             XCTFail("Expected error: \(expectedError)")
         } catch {
             XCTAssertEqual("\(error)", expectedError)
@@ -45,6 +45,7 @@ class StringParsingTests: XCTestCase {
         testParsing(" \(string)", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
         testParsing("\(string)", expectedExpression: expectedExpression, expectedDistance: length)
         testParsing("\(string) ", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string) extra", expectedExpression: expectedExpression, expectedDistance: length)
         testParsing("\(string)\r\n", expectedExpression: expectedExpression, expectedDistance: length)
         testParsing("\(string)}}", expectedExpression: expectedExpression, expectedDistance: length)
         testParsing("\(string) }}", expectedExpression: expectedExpression, expectedDistance: length)
