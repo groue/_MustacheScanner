@@ -11,13 +11,13 @@ import XCTest
 
 class StringParsingTests: XCTestCase {
     
-    func testParsing(string: String, expectedExpression: Expression, expectedDistance: Scanner.Distance) {
+    func testParsing(string: String, tagEndDelimiter: String, expectedExpression: Expression, expectedDistance: Scanner.Distance) {
         print(String(reflecting: string))
         let scanner = Scanner(characters: string.characters)
         let expressionParser = ExpressionParser()
         var empty = false
         do {
-            let expression = try expressionParser.parseExpression(scanner, empty: &empty)
+            let expression = try expressionParser.parseExpression(scanner, tagEndDelimiter: tagEndDelimiter, empty: &empty)
             XCTAssertEqual(expression, expectedExpression)
             XCTAssertEqual(scanner.characters.startIndex.distanceTo(scanner.scanIndex), expectedDistance)
         } catch {
@@ -25,13 +25,13 @@ class StringParsingTests: XCTestCase {
         }
     }
     
-    func testParsing(string: String, expectedEmpty: Bool,  expectedError: String, expectedDistance: Scanner.Distance) {
+    func testParsing(string: String, tagEndDelimiter: String, expectedEmpty: Bool,  expectedError: String, expectedDistance: Scanner.Distance) {
         print(String(reflecting: string))
         let scanner = Scanner(characters: string.characters)
         let expressionParser = ExpressionParser()
         var empty = false
         do {
-            try expressionParser.parseExpression(scanner, empty: &empty)
+            try expressionParser.parseExpression(scanner, tagEndDelimiter: tagEndDelimiter, empty: &empty)
             XCTFail("Expected error: \(expectedError)")
         } catch {
             XCTAssertEqual("\(error)", expectedError)
@@ -42,23 +42,23 @@ class StringParsingTests: XCTestCase {
     
     func testExpressionString(string: String, expectedExpression: Expression) {
         let length = string.characters.count
-        testParsing(" \(string)", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
-        testParsing("\(string)", expectedExpression: expectedExpression, expectedDistance: length)
-        testParsing("\(string) ", expectedExpression: expectedExpression, expectedDistance: length)
-        testParsing("\(string) extra", expectedExpression: expectedExpression, expectedDistance: length)
-        testParsing("\(string)\r\n", expectedExpression: expectedExpression, expectedDistance: length)
-        testParsing("\(string)}}", expectedExpression: expectedExpression, expectedDistance: length)
-        testParsing("\(string) }}", expectedExpression: expectedExpression, expectedDistance: length)
-        testParsing("\(string)\r\n}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing(" \(string)", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("\(string)", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string) ", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string) extra", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string)\r\n", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string)}}", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string) }}", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string)\r\n}}", tagEndDelimiter: "}}", expectedExpression: expectedExpression, expectedDistance: length)
     }
     
     func testExpressionParsing() {
-        testParsing("", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
-        testParsing(" ", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
-        testParsing("\r\n", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
-        testParsing("}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
-        testParsing(" }}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
-        testParsing("\r\n}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing(" ", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("\r\n", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("}}", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing(" }}", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("\r\n}}", tagEndDelimiter: "}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
         
         testExpressionString(".", expectedExpression: Expression.ImplicitIterator)
         testExpressionString("a", expectedExpression: Expression.Identifier(identifier: "a"))

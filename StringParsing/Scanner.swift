@@ -23,4 +23,21 @@ public class Scanner {
         scanIndex = scanIndex.successor()
         return result
     }
+    
+    func scanString(string: String) -> String? {
+        let stringCharacters = string.characters
+        let stringLength = stringCharacters.count
+        guard scanIndex.distanceTo(endIndex) >= stringLength else {
+            return nil
+        }
+        let successEndIndex = scanIndex.advancedBy(stringLength)
+        let nextCharacters = characters[scanIndex..<successEndIndex]
+        for (nextCharacter, stringCharacter) in zip(nextCharacters, stringCharacters) {
+            if nextCharacter != stringCharacter {
+                return nil
+            }
+        }
+        self.scanIndex = successEndIndex
+        return string
+    }
 }

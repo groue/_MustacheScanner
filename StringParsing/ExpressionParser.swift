@@ -1,6 +1,6 @@
 public class ExpressionParser {
     
-    func parseExpression(scanner: Scanner, inout empty outEmpty: Bool) throws -> Expression {
+    func parseExpression(scanner: Scanner, tagEndDelimiter: String, inout empty outEmpty: Bool) throws -> Expression {
     
         enum State {
             // error
@@ -94,7 +94,6 @@ public class ExpressionParser {
                 case "{", "}", "&", "$", "#", "^", "/", "<", ">":
                     scanner.scanIndex = scanner.scanIndex.advancedBy(-1)
                     break characterLoop
-//                    state = .Error("Unexpected character `\(c)` at index \(scanner.characters.startIndex.distanceTo(scanner.scanIndex.predecessor()))")
                 default:
                     state = .ScopingIdentifier(startIndex: scanner.scanIndex.predecessor(), baseExpression: Expression.ImplicitIterator)
                 }
