@@ -10,6 +10,10 @@
 		56B45FE81C18520400A18DAD /* StringParsing.h in Headers */ = {isa = PBXBuildFile; fileRef = 56B45FE71C18520400A18DAD /* StringParsing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		56B45FEF1C18520400A18DAD /* StringParsing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56B45FE41C18520400A18DAD /* StringParsing.framework */; };
 		56B45FF41C18520400A18DAD /* StringParsingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B45FF31C18520400A18DAD /* StringParsingTests.swift */; };
+		56B45FFF1C18521300A18DAD /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B45FFE1C18521300A18DAD /* Scanner.swift */; };
+		56B460011C1852EB00A18DAD /* ExpressionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B460001C1852EB00A18DAD /* ExpressionParser.swift */; };
+		56B460031C18534C00A18DAD /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B460021C18534C00A18DAD /* Expression.swift */; };
+		56B460051C185AC300A18DAD /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56B460041C185AC300A18DAD /* Common.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +33,10 @@
 		56B45FEE1C18520400A18DAD /* StringParsingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StringParsingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		56B45FF31C18520400A18DAD /* StringParsingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringParsingTests.swift; sourceTree = "<group>"; };
 		56B45FF51C18520400A18DAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		56B45FFE1C18521300A18DAD /* Scanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
+		56B460001C1852EB00A18DAD /* ExpressionParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionParser.swift; sourceTree = "<group>"; };
+		56B460021C18534C00A18DAD /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
+		56B460041C185AC300A18DAD /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +81,10 @@
 			children = (
 				56B45FE71C18520400A18DAD /* StringParsing.h */,
 				56B45FE91C18520400A18DAD /* Info.plist */,
+				56B45FFE1C18521300A18DAD /* Scanner.swift */,
+				56B460001C1852EB00A18DAD /* ExpressionParser.swift */,
+				56B460021C18534C00A18DAD /* Expression.swift */,
+				56B460041C185AC300A18DAD /* Common.swift */,
 			);
 			path = StringParsing;
 			sourceTree = "<group>";
@@ -194,6 +206,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				56B460051C185AC300A18DAD /* Common.swift in Sources */,
+				56B460011C1852EB00A18DAD /* ExpressionParser.swift in Sources */,
+				56B45FFF1C18521300A18DAD /* Scanner.swift in Sources */,
+				56B460031C18534C00A18DAD /* Expression.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +321,7 @@
 		56B45FF91C18520400A18DAD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -317,12 +334,14 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pierlis.StringParsing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		56B45FFA1C18520400A18DAD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
