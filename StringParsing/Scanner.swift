@@ -2,7 +2,7 @@ public class Scanner {
     typealias Index = String.CharacterView.Index
     typealias Distance = String.CharacterView.Index.Distance
     let characters: String.CharacterView
-    private(set) var scanIndex: Index
+    var scanIndex: Index
     private let endIndex: Index
     
     init(characters: String.CharacterView, initialIndex: Index? = nil) {
@@ -13,10 +13,6 @@ public class Scanner {
     
     var atEnd: Bool {
         return scanIndex == endIndex
-    }
-    
-    func advanceBy(distance: Distance) {
-        scanIndex = scanIndex.advancedBy(distance)
     }
     
     func scanCharacter() -> Character? {

@@ -12,12 +12,12 @@ import XCTest
 class StringParsingTests: XCTestCase {
     
     func testParsing(string: String, expectedExpression: Expression, expectedDistance: Scanner.Distance) {
+        print(String(reflecting: string))
         let scanner = Scanner(characters: string.characters)
         let expressionParser = ExpressionParser(scanner: scanner)
         var empty = false
         do {
             let expression = try expressionParser.parseExpression(&empty)
-            print(string)
             XCTAssertEqual(expression, expectedExpression)
             XCTAssertEqual(scanner.characters.startIndex.distanceTo(scanner.scanIndex), expectedDistance)
         } catch {
@@ -26,75 +26,48 @@ class StringParsingTests: XCTestCase {
     }
     
     func testParsing(string: String, expectedEmpty: Bool,  expectedError: String, expectedDistance: Scanner.Distance) {
+        print(String(reflecting: string))
         let scanner = Scanner(characters: string.characters)
         let expressionParser = ExpressionParser(scanner: scanner)
         var empty = false
         do {
             try expressionParser.parseExpression(&empty)
-            print(string)
             XCTFail("Expected error: \(expectedError)")
         } catch {
             XCTAssertEqual("\(error)", expectedError)
             XCTAssertEqual(empty, expectedEmpty)
+            XCTAssertEqual(scanner.characters.startIndex.distanceTo(scanner.scanIndex), expectedDistance)
         }
     }
     
+    func testExpressionString(string: String, expectedExpression: Expression) {
+        let length = string.characters.count
+        testParsing(" \(string)", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("\(string)", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string) ", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string)\r\n", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string)}}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string) }}", expectedExpression: expectedExpression, expectedDistance: length)
+        testParsing("\(string)\r\n}}", expectedExpression: expectedExpression, expectedDistance: length)
+    }
+    
     func testExpressionParsing() {
-        testParsing("", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 1)
-        testParsing(" ", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 1)
-        testParsing("\r\n", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 1)
-        testParsing("}}", expectedEmpty: true, expectedError: "Parse error: Invalid expression", expectedDistance: 1)
-        testParsing(" }}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 1)
-        testParsing("\r\n}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 1)
-
-        testParsing(".", expectedExpression: Expression.ImplicitIterator, expectedDistance: 1)
-        testParsing(". ", expectedExpression: Expression.ImplicitIterator, expectedDistance: 2)
-        testParsing(".\r\n", expectedExpression: Expression.ImplicitIterator, expectedDistance: 2)
-//        testParsing(".}}", expectedExpression: Expression.ImplicitIterator, expectedDistance: 1)
-        testParsing(". }}", expectedExpression: Expression.ImplicitIterator, expectedDistance: 2)
-        testParsing(".\r\n}}", expectedExpression: Expression.ImplicitIterator, expectedDistance: 2)
+        testParsing("", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing(" ", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("\r\n", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing(" }}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
+        testParsing("\r\n}}", expectedEmpty: true, expectedError: "Parse error: Missing expression", expectedDistance: 0)
         
-        testParsing("a", expectedExpression: Expression.Identifier(identifier: "a"), expectedDistance: 1)
-        testParsing("a ", expectedExpression: Expression.Identifier(identifier: "a"), expectedDistance: 2)
-        testParsing("a\r\n", expectedExpression: Expression.Identifier(identifier: "a"), expectedDistance: 2)
-//        testParsing("a}}", expectedExpression: Expression.Identifier(identifier: "a"), expectedDistance: 1)
-        testParsing("a }}", expectedExpression: Expression.Identifier(identifier: "a"), expectedDistance: 2)
-        testParsing("a\r\n}}", expectedExpression: Expression.Identifier(identifier: "a"), expectedDistance: 2)
-        
-        testParsing("foo", expectedExpression: Expression.Identifier(identifier: "foo"), expectedDistance: 3)
-        testParsing("foo ", expectedExpression: Expression.Identifier(identifier: "foo"), expectedDistance: 4)
-        testParsing("foo\r\n", expectedExpression: Expression.Identifier(identifier: "foo"), expectedDistance: 4)
-//        testParsing("foo}}", expectedExpression: Expression.Identifier(identifier: "foo"), expectedDistance: 3)
-        testParsing("foo }}", expectedExpression: Expression.Identifier(identifier: "foo"), expectedDistance: 4)
-        testParsing("foo\r\n}}", expectedExpression: Expression.Identifier(identifier: "foo"), expectedDistance: 4)
-        
-        testParsing(".a", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), expectedDistance: 2)
-        testParsing(".a ", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), expectedDistance: 3)
-        testParsing(".a\r\n", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), expectedDistance: 3)
-//        testParsing(".a}}", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), expectedDistance: 2)
-        testParsing(".a }}", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), expectedDistance: 3)
-        testParsing(".a\r\n}}", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), expectedDistance: 3)
-        
-        testParsing(".foo", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "foo"), expectedDistance: 4)
-        testParsing(".foo ", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "foo"), expectedDistance: 5)
-        testParsing(".foo\r\n", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "foo"), expectedDistance: 5)
-//        testParsing(".foo}}", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "foo"), expectedDistance: 4)
-        testParsing(".foo }}", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "foo"), expectedDistance: 5)
-        testParsing(".foo\r\n}}", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "foo"), expectedDistance: 5)
-        
-        testParsing("a.a", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "a"), expectedDistance: 3)
-        testParsing("a.a ", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "a"), expectedDistance: 4)
-        testParsing("a.a\r\n", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "a"), expectedDistance: 4)
-//        testParsing("a.a}}", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "a"), expectedDistance: 3)
-        testParsing("a.a }}", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "a"), expectedDistance: 4)
-        testParsing("a.a\r\n}}", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "a"), expectedDistance: 4)
-        
-        testParsing("foo.a", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "a"), expectedDistance: 5)
-        testParsing("foo.a ", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "a"), expectedDistance: 6)
-        testParsing("foo.a\r\n", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "a"), expectedDistance: 6)
-//        testParsing("foo.a}}", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "a"), expectedDistance: 5)
-        testParsing("foo.a }}", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "a"), expectedDistance: 6)
-        testParsing("foo.a\r\n}}", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "a"), expectedDistance: 6)
+        testExpressionString(".", expectedExpression: Expression.ImplicitIterator)
+        testExpressionString("a", expectedExpression: Expression.Identifier(identifier: "a"))
+        testExpressionString("foo?", expectedExpression: Expression.Identifier(identifier: "foo?"))
+        testExpressionString(".a", expectedExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"))
+        testExpressionString(".a.foo!", expectedExpression: Expression.Scoped(baseExpression: Expression.Scoped(baseExpression: Expression.ImplicitIterator, identifier: "a"), identifier: "foo!"))
+        testExpressionString("a.b", expectedExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "a"), identifier: "b"))
+        testExpressionString("f(x)", expectedExpression: Expression.Filter(filterExpression: Expression.Identifier(identifier: "f"), argumentExpression: Expression.Identifier(identifier: "x"), partialApplication: false))
+        testExpressionString("f(x, y)", expectedExpression: Expression.Filter(filterExpression: Expression.Filter(filterExpression: Expression.Identifier(identifier: "f"), argumentExpression: Expression.Identifier(identifier: "x"), partialApplication: true), argumentExpression: Expression.Identifier(identifier: "y"), partialApplication: false))
+        testExpressionString("f ( x(foo.bar) , y)", expectedExpression: Expression.Filter(filterExpression: Expression.Filter(filterExpression: Expression.Identifier(identifier: "f"), argumentExpression: Expression.Filter(filterExpression: Expression.Identifier(identifier: "x"), argumentExpression: Expression.Scoped(baseExpression: Expression.Identifier(identifier: "foo"), identifier: "bar"), partialApplication: false), partialApplication: true), argumentExpression: Expression.Identifier(identifier: "y"), partialApplication: false))
     }
     
 //    func testPerformanceExample() {
